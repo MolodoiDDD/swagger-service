@@ -2,10 +2,8 @@ package com.example.swagger_service.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +35,7 @@ public class Citizen {
     @Column(name = "birth_date")
     @NotNull(message = "Поле 'Дата рождения' не может быть пустым")
     @PastOrPresent(message = "Поле 'Дата рождения' не может быть в будущем")
-    private LocalDate birthDate;
+    private LocalDateTime birthDate;
 
     @Column(name = "phone")
     @NotNull(message = "Поле 'Номер телефона' не может быть пустым")
