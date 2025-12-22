@@ -39,16 +39,15 @@ public class CitizenService {
         else {
             birthDateStr = null;
         }
+
         List<Citizen> list = citizenRepository.search(firstName, lastName, middleName, birthDateStr);
 
         if (list.isEmpty())
         {
-            throw new EntityNotFoundException("Гражданин(е) не найдены");
+            throw new EntityNotFoundException("Гражданин(е) не найден(ы)");
         }
 
         return list;
-
-
     }
 
     public Citizen getById(Long id) {
@@ -63,7 +62,6 @@ public class CitizenService {
             throw new EntityNotFoundException("Гражданин не найден");
         }
     }
-
 
     public Citizen create(Citizen citizen)
     {
@@ -122,6 +120,4 @@ public class CitizenService {
             throw new IllegalArgumentException("Гражданин должен быть старше 18 лет");
         }
     }
-
-
 }

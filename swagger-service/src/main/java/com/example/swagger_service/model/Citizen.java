@@ -41,11 +41,11 @@ public class Citizen {
 
     @Column(name = "phone")
     @NotNull(message = "Поле 'Номер телефона' не может быть пустым")
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Некорректный формат номера телефона")
+    @Pattern(regexp = "^\\+?[0-9]{11}$", message = "Некорректный формат номера телефона")
     private String phone;
 
     @Column(name = "extra_phone")
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Некорректный формат доп. номера телефона")
+    @Pattern(regexp = "^\\+?[0-9]{11}$", message = "Некорректный формат доп. номера телефона")
     private String extraPhone;
 
     @Column(name = "dul_series")
@@ -55,7 +55,7 @@ public class Citizen {
 
     @Column(name = "dul_number")
     @NotBlank(message = "Поле 'Серия паспорта' не может быть пустым")
-    @Pattern(regexp = "^\\d{6}$", message = "Поле 'Серия паспорта' должно содеражать 6 цифры")
+    @Pattern(regexp = "^\\d{6}$", message = "Поле 'Серия паспорта' должно содеражать 6 цифр")
     private String dulNumber;
 
 }
