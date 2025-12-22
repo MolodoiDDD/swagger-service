@@ -1,8 +1,9 @@
 package com.example.swagger_service.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -35,7 +36,8 @@ public class Citizen {
     @Column(name = "birth_date")
     @NotNull(message = "Поле 'Дата рождения' не может быть пустым")
     @PastOrPresent(message = "Поле 'Дата рождения' не может быть в будущем")
-    private LocalDateTime birthDate;
+    @JsonFormat(pattern = "dd.MM.yyyy")
+    private LocalDate birthDate;
 
     @Column(name = "phone")
     @NotNull(message = "Поле 'Номер телефона' не может быть пустым")

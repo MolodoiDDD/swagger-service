@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -30,9 +29,26 @@ public class CitizenService {
     public List<Citizen> get(String firstName,
                              String lastName,
                              String middleName,
-                             LocalDateTime birthDate)
+                             LocalDate birthDate)
     {
-        return citizenRepository.search(firstName, lastName, middleName, birthDate);
+        String birthDateStr;
+        if (birthDate != null)
+        {
+            birthDateStr = birthDate.toString();
+        }
+        else {
+            birthDateStr = null;
+        }
+        List<Citizen> list = citizenRepository.search(firstName, lastName, middleName, birthDateStr);
+
+        if (list.isEmpty())
+        {
+            throw new EntityNotFoundException("Гражданин(е) не найдены");
+        }
+
+        return list;
+
+
     }
 
     public Citizen getById(Long id) {
@@ -44,17 +60,17 @@ public class CitizenService {
         }
         else
         {
-            throw new EntityNotFoundException("Citizen not found");
+            throw new EntityNotFoundException("Гражданин не найден");
         }
     }
 
 
     public Citizen create(Citizen citizen)
     {
-        boolean exist = citizenRepository.findByLastNameAndFirstNameAndMiddleNameAndBirthDate(citizen.getFirstName(),
-                citizen.getLastName(),
+        boolean exist = citizenRepository.existsByLastNameAndFirstNameAndMiddleNameAndBirthDate(citizen.getLastName(),
+                citizen.getFirstName(),
                 citizen.getMiddleName(),
-                citizen.getBirthDate()).isPresent();
+                citizen.getBirthDate());
 
         if (exist)
         {
@@ -68,9 +84,10 @@ public class CitizenService {
     }
 
 
+
     public void delete(Long id) {
         if (!citizenRepository.existsById(id)) {
-            throw new EntityNotFoundException("Citizen not found");
+            throw new EntityNotFoundException("Гражданин не найден");
         }
 
         citizenRepository.deleteById(id);
@@ -81,7 +98,7 @@ public class CitizenService {
     {
         if (!citizenRepository.existsById(id))
         {
-            throw new EntityNotFoundException("Citizen not found");
+            throw new EntityNotFoundException("Гражданин не найдены");
         }
 
         validAge(citizen);
@@ -92,7 +109,7 @@ public class CitizenService {
 
     private void validAge(Citizen citizen)
     {
-        LocalDateTime birthDate = citizen.getBirthDate();
+        LocalDate birthDate = citizen.getBirthDate();
         if (birthDate == null)
         {
             return;

@@ -3,9 +3,11 @@ package com.example.swagger_service.exception;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 
 @RestControllerAdvice
@@ -26,7 +28,7 @@ public class GlobalExceptionHandler {
             message = "Поле '" + field + "': " + errorMessage;
          }
 
-        return ResponseEntity.status(400).body(message);
+        return ResponseEntity.status(422).body(message);
     }
 
     @ExceptionHandler(Exception.class)
@@ -43,8 +45,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(404).body(ex.getMessage());
     }
 
-    @ExceptionHandler(IllegalAccessException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalAccessException ex)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex)
     {
         log.error("IllegalArgumentException", ex);
         return ResponseEntity.status(400).body(ex.getMessage());
@@ -56,4 +58,26 @@ public class GlobalExceptionHandler {
         log.error("CitizenAlreadyExitsException", ex);
         return ResponseEntity.status(409).body(ex.getMessage());
     }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        log.error("HttpMessageNotReadableException", ex);
+        return ResponseEntity
+                .status(422)
+                .body("Дата должна быть в формате dd.MM.yyyy");
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex)
+    {
+        if ("birthDate".equals(ex.getName()))
+        {
+            return ResponseEntity.status(422).body("Дата должна быть в формате dd.MM.yyyy");
+        }
+        else
+        {
+            return ResponseEntity.status(422).body("Некорректное значение параметра '" + ex.getMessage() + "'");
+        }
+    }
+
 }
