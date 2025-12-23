@@ -1,21 +1,18 @@
 package com.example.swagger_service.controller;
 
 import com.example.swagger_service.model.Citizen;
-import com.example.swagger_service.repository.CitizenRepository;
 import com.example.swagger_service.service.CitizenService;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
+@Slf4j
 public class CitizenController {
 
     private final CitizenService citizenService;
@@ -31,58 +28,41 @@ public class CitizenController {
                              @RequestParam(required = false) String middleName,
                              @RequestParam(required = false) LocalDate birthDate)
     {
+        log.info("method=GET endpoint=/citizens params={{firstName={}, lastName={}, middleName={}, birthDate={}}",
+        firstName, lastName, middleName, birthDate);
+
         return citizenService.get(firstName, lastName, middleName, birthDate);
     }
 
     @GetMapping("/citizens/{id}")
-    public ResponseEntity<Citizen> getById(@PathVariable Long id) {
-
-        try {
-            Citizen citizen = citizenService.getById(id);
-            return ResponseEntity.ok(citizen);
-        }
-        catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public Citizen getById(@PathVariable Long id)
+    {
+        log.info("method=GET endpoint=/citizens/{} id={}", id, id);
+        return citizenService.getById(id);
     }
 
     @PostMapping("/citizens")
-    public ResponseEntity<Citizen> create(@RequestBody Citizen citizen)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Citizen create(@Valid @RequestBody Citizen citizen)
     {
-        try {
-            Citizen saved = citizenService.create(citizen);
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
-        }
-        catch (EntityNotFoundException e)
-        {
-            return ResponseEntity.status(HttpStatus.NOT_EXTENDED).build();
-        }
+        log.info("method=POST endpoint=/citizens/ body={}", citizen.toString());
+
+        return citizenService.create(citizen);
     }
 
     @DeleteMapping("/citizens/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        try {
-            citizenService.delete(id);
-            return ResponseEntity.noContent().build();
-        }
-        catch (EntityNotFoundException e)
-        {
-            return ResponseEntity.notFound().build();
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id)
+    {
+        log.info("method=DELETE endpoint=/citizens/{} id={}", id, id);
+        citizenService.delete(id);
     }
 
     @PutMapping("/citizens/{id}")
-    public ResponseEntity<Citizen> update(@PathVariable Long id,
-                                          @RequestBody Citizen citizen)
+    public Citizen update(@PathVariable Long id,
+                          @Valid @RequestBody Citizen citizen)
     {
-        try {
-            Citizen saved = citizenService.update(id, citizen);
-            return ResponseEntity.ok(saved);
-        }
-        catch (EntityNotFoundException e)
-        {
-            return ResponseEntity.notFound().build();
-        }
-
+        log.info("method=PUT endpoint=/citizens/{} id={} body={}", id, id, citizen.toString());
+        return citizenService.update(id, citizen);
     }
 }
